@@ -1,30 +1,52 @@
 import sqlite3
 
-connection = sqlite3.connect('Tweets.db')
+connection = sqlite3.connect('ProjetoAcoesTwitter.db')
 
 # cursor permite execução de comandos SQL
 Cursor = connection.cursor()
 
 
-def create_table():
-    Cursor.execute(
-        'CREATE TABLE tb_ (id_tweet integer, horario_tweet text, conteudo text)')
+def cria_tabela(nome_tabela, cursor_database):
+    cursor_database.execute(
+        f'CREATE TABLE if not exists tb_{nome_tabela} (stock text,id_tweet integer, horario_tweet DATETIME, conteudo text)')
 
 
-create_table()
-
-
-def drop_table():
-    Cursor.execute('DROP TABLE tb_testes')
+def deleta_tabela(nome_tabela, cursor_database):
+    cursor_database.execute(f'DROP TABLE tb_{nome_tabela}')
     connection.commit()
 
 
-# drop_table()
+def cria_conjunto_de_tabelas(iteravel, cursor_database):
+    if type(iteravel) == dict:
+        tipo = "dicionario"
+        for categoria in iteravel.items():
+            lista_de_tabelas = categoria[1]
+            [cria_tabela(tabela, cursor_database)
+             for tabela in lista_de_tabelas]
+    elif type(iteravel) == list:
+        tipo = "lista"
+        for tabela in iteravel:
+            cria_tabela(tabela, cursor_database)
+    print(f'Tabelas foram criadas de acordo com {tipo}!')
 
 
-def insert():
-    Cursor.execute("INSERT INTO tb_testes values (1, 'vsvv'), (5, 'verv')")
-    # connection.commit()
+def apaga_conjunto_de_tabelas(iteravel, cursor_database):
+    if type(iteravel) == dict:
+        tipo = "dicionario"
+        for categoria in iteravel.items():
+            lista_de_tabelas = categoria[1]
+            [deleta_tabela(tabela, cursor_database)
+             for tabela in lista_de_tabelas]
+    elif type(iteravel) == list:
+        tipo = "lista"
+        for tabela in iteravel:
+            deleta_tabela(tabela, cursor_database)
+    print(f'Tabelas foram deletadas de acordo com {tipo}!')
 
 
-# insert()
+STOCKS = {"USA": ['GOOGL', 'AMZN', 'MSFT', 'TSLA', 'AAPL'],
+          "BR": ['ITSA4', 'PETR4', 'VALE3', 'WEGE3']}
+
+vale = ['vale4']
+cria_conjunto_de_tabelas(STOCKS, Cursor)
+# apaga_conjunto_de_tabelas(vale, Cursor)
