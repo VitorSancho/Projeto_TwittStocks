@@ -8,7 +8,7 @@ Cursor = connection.cursor()
 
 def cria_tabela(nome_tabela, cursor_database):
     cursor_database.execute(
-        f'CREATE TABLE if not exists tb_{nome_tabela} (stock text,id_tweet integer, horario_tweet DATETIME, conteudo text)')
+        f'CREATE TABLE if not exists tb_{nome_tabela} (stock text,data_id text, Date DATETIME, Close numeric, Volume bigint)')
 
 
 def deleta_tabela(nome_tabela, cursor_database):
@@ -47,6 +47,13 @@ def apaga_conjunto_de_tabelas(iteravel, cursor_database):
 STOCKS = {"USA": ['GOOGL', 'AMZN', 'MSFT', 'TSLA', 'AAPL'],
           "BR": ['ITSA4', 'PETR4', 'VALE3', 'WEGE3']}
 
-vale = ['vale4']
-cria_conjunto_de_tabelas(STOCKS, Cursor)
+negociacao_STOCKS = {"USA": ['negociacao_GOOGL', 'negociacao_AMZN', 'negociacao_MSFT', 'negociacao_TSLA', 'negociacao_AAPL'],
+                     "BR": ['negociacao_ITSA4', 'negociacao_PETR4', 'negociacao_VALE3', 'negociacao_WEGE3']}
+
+vale = ['negociacao_googl']
+cria_conjunto_de_tabelas(vale, Cursor)
 # apaga_conjunto_de_tabelas(vale, Cursor)
+
+# Cursor.execute(
+#     'insert into tb_negociacao_GOOGL values ("vvs","cccss","2020-02-02","456.23","3458325082")')
+# connection.commit()
