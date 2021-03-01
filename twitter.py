@@ -3,6 +3,7 @@ import os
 import dotenv
 import pandas as pd
 import sqlalchemy
+import time
 
 
 def data_from_tweet(tweet, stock):
@@ -27,10 +28,11 @@ auth.set_access_token(
     os.getenv("ACCESSTOKEN"),
     os.getenv("ACCESSTOKEN_SECRET"))
 
-api = tweepy.API(auth)
+api = tweepy.API(auth, wait_on_rate_limit=True, wait_on_rate_limit_notify=True)
 # result = api.search(q="itsa4")
 STOCKS = {"USA": ['GOOGL', 'AMZN', 'MSFT', 'TSLA', 'AAPL'],
           "BR": ['ITSA4', 'PETR4', 'VALE3', 'WEGE3']}
+# STOCKS = {"USA": ['teomewhy']}
 max_tweets = 500
 
 for pais in STOCKS.items():
@@ -40,15 +42,23 @@ for pais in STOCKS.items():
         if stock == 'GOOGL':
             query = stock+' -GOOGLE'
 
-        db_query = f"SELECT MAX(cast(id_tweet as bigint)) as max_id from tb_tweet where stock = {stock}"
-        try:
-            max_id = pd.read_sql_query(db_query, conexao)['max_id'].values[0]
-        except:
+        db_query = f"SELECT MAX(cast(id_tweets as bigint)) as max_id from tb_tweet where stock = '{stock}'"
+
+        max_id = pd.read_sql_query(db_query, conexao)['max_id'].values[0]
+        print("entrei aqui")
+
+        if max_id == None:
             max_id = 0
+            print("entrei aqui2")
 
         query = stock
-        searched_tweets = [status for status in tweepy.Cursor(
-            api.search, q=query, since_id=max_id+1).items(max_tweets)]
+        try:
+            searched_tweets = [status for status in tweepy.Cursor(
+                api.search, q=query, since_id=max_id+1).items(max_tweets)]
+
+        except tweepy.TweepError as e:
+            print(e.reason)
+            time.sleep(120)
 
         quantidade_de_tweets = 0
         try:
