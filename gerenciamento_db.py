@@ -6,8 +6,10 @@ connection = sqlite3.connect('ProjetoAcoesTwitter.db')
 Cursor = connection.cursor()
 
 campos_negociacoes = "id integer primary key autoincrement,stock varchar(20),data_id int, Date DATETIME, Close numeric, Volume bigint, FOREIGN KEY (stock) REFERENCES tb_stocks (stock)"
-campos_tweet = "id integer primary key autoincrement,stock varchar(20), id_tweets int, horario_tweet timestamp,conteudo varchar, FOREIGN KEY (stock) REFERENCES tb_stocks (stock)"
+campos_tweet = "id integer primary key autoincrement,stock varchar(20), id_tweets int, horario_tweet timestamp, FOREIGN KEY (stock) REFERENCES tb_stocks (stock)"
 campos_stock = "stock varchar(20), empresa varchar(20), país varchar(20), PRIMARY KEY (stock)"
+campos_log = "id integer primary key autoincrement,stock varchar(20),horario_coleta timestamp,execucao_diaria varchar(20),quantidade int,obs varchar(200)"
+# conteudo varchar,
 
 
 def cria_tabela(nome_tabela, cursor_database, campos):
@@ -79,12 +81,18 @@ STOCKS = (("GOOGL", "Google", "USA"), ("AMZN", "Amazon", "USA"), ("MSFT", "Micro
 
 # cursor_database.execute('CREATE INDEX indice_stock ON table_name (stock)')
 lista = ['stocks', 'negociacoes', 'tweet']
-apaga_conjunto_de_tabelas(lista, Cursor)
+# apaga_conjunto_de_tabelas(lista, Cursor)
 
 
-# Cursor.execute('delete from tb_tweet')
-# connection.commit()
+# # Cursor.execute('delete from tb_tweet')
+# # connection.commit()
 
-cria_tabela('stocks', Cursor, campos_stock)
-cria_tabela("tweet", Cursor, campos_tweet)
-cria_tabela("negociacoes", Cursor, campos_negociacoes)
+# cria_tabela('stocks', Cursor, campos_stock)
+# cria_tabela("tweet", Cursor, campos_tweet)
+# cria_tabela("negociacoes", Cursor, campos_negociacoes)
+# cria_tabela("log_execucao", Cursor, campos_log)
+
+
+Cursor.execute(
+    'INSERT INTO tb_log_execucao (stock, horario_coleta, execucao_diaria, quantidade, obs) values ("stock", 2020-20-21, "1ª execucao", 20, "testando")')
+connection.commit()
